@@ -1,0 +1,26 @@
+{
+    "files.associations": {
+        "*.pde": "pde",
+        "xlocale": "cpp",
+        "array": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "queue": "cpp",
+        "vector": "cpp",
+        "xstring": "cpp",
+        "xutility": "cpp",
+        "iosfwd": "cpp",
+        "xlocbuf": "cpp",
+        "xlocinfo": "cpp",
+        "system_error": "cpp",
+        "bitset": "cpp",
+        "initializer_list": "cpp",
+        "regex": "cpp",
+        "type_traits": "cpp",
+        "xhash": "cpp",
+        "xlocmes": "cpp",
+        "string": "cpp",
+        "typeinfo": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
+}

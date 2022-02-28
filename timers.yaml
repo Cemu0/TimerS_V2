@@ -1,0 +1,324 @@
+
+esphome:
+  name: cemu0timers
+  platform: ESP32
+  board: wemos_d1_mini32
+  includes:
+    - timer_manager.h
+    - screens.h
+    - UI.h
+
+  on_boot:
+  - then:
+      # read the RTC time once when the system boots
+      ds1307.read_time:
+
+  #turn on screen when boot ? 
+  - priority: 100
+    then:
+      - switch.turn_on: screenlight
+
+wifi:
+  id: swifi
+
+  #using normal connect
+  # networks:
+  # - ssid: "YOUR_SSID1"
+  #   password: "YOUR_PASS1"
+  # - ssid: "YOUR_SSID2"
+  #   password: "YOUR_PASS2"
+
+  #using fast connect
+  ssid: "YOUR_SSID"
+  password: "YOUR_PASS"
+  fast_connect: True
+
+  # prevent the system from self reboot if 
+  reboot_timeout: 0s
+
+  # output_power: 10.0
+  power_save_mode: none
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Timers hotspot"
+    password: "apassword"
+
+#fallback mechanism, can be disabled if you sure your wifi connection config is corrected 
+captive_portal:
+
+# Enable logging
+logger:
+
+# disable Home Assistant API by default to use MQTT !
+
+mqtt:
+  id: smqtt
+  broker: your.mqtt.broker.duckdns.net
+  port: 1883
+  username: your_mqtt_username
+  password: your_mqtt_password
+
+i2c:
+  - id: bus_a
+    sda: 21
+    scl: 22
+    scan: false
+    frequency: 200kHz
+
+  #incase you use an external control like a pcf8574_hub and not use direct GPIO
+  # - id: bus_b
+  #   sda: 25
+  #   scl: 26
+  #   scan: false
+  #   frequency: 10kHz
+
+ota:
+   safe_mode: false
+   password: "your_ota_pass"
+
+# Example configuration entry if use pcf8574
+# pcf8574:
+#   - id: 'pcf8574_hub'
+#     i2c_id: bus_b
+#     address: 0x20 
+#     pcf8575: false
+
+globals:
+   - id: screen_on
+     type: bool
+     restore_value: no
+     initial_value: '1'
+
+  #  - id: screen_page
+  #    type: int
+  #    restore_value: no
+  #    initial_value: '1'
+
+
+time:
+    #   0x68
+  - platform: ds1307
+    # repeated synchronization is not necessary unless the external RTC
+    # is much more accurate than the internal clock
+    update_interval: never
+    i2c_id: bus_a
+
+  - platform: sntp
+    id: my_time
+    on_time_sync:
+      then:
+        # ... and update the RTC when the synchronization was successful
+        ds1307.write_time:
+
+switch:
+  # - platform: gpio
+  #   id: relay8
+  #   pin: 2
+  #   name: "Test LED"
+    
+  - platform: template
+    name: "Screen Led Control"
+    id: screenlight
+    internal: True
+    optimistic: True
+    turn_on_action:
+      then:
+        - delay: 5min
+        - switch.turn_off: screenlight
+
+  - platform: gpio
+    name: "Relay 1"
+    id: relay0
+    restore_mode: ALWAYS_OFF
+    pin:
+      # pcf8574: pcf8574_hub
+      # Use pin number 0 in case pcf8574_hub and go on with other relay !
+      number: 2
+      # One of INPUT or OUTPUT
+      mode: OUTPUT
+      inverted: false
+
+  - platform: gpio
+    name: "Relay 2"
+    id: relay1
+    restore_mode: ALWAYS_OFF
+    pin:
+      # pcf8574: pcf8574_hub
+      number: 4
+      mode: OUTPUT
+      inverted: false
+
+  - platform: gpio
+    name: "Relay 3"
+    id: relay2
+    restore_mode: ALWAYS_OFF
+    pin:
+      # pcf8574: pcf8574_hub
+      number: 12
+      mode: OUTPUT
+      inverted: false
+      
+  - platform: gpio
+    name: "Relay 4"
+    id: relay3
+    restore_mode: ALWAYS_OFF
+    pin:
+      # pcf8574: pcf8574_hub
+      number: 13
+      mode: OUTPUT
+      inverted: false
+
+  - platform: gpio
+    name: "Relay 5"
+    id: relay4
+    restore_mode: ALWAYS_OFF
+    pin:
+      # pcf8574: pcf8574_hub
+      # number: 17 #this pin has been burn off by me 
+      number: 33
+      mode: OUTPUT
+      inverted: false
+
+  - platform: gpio
+    name: "Relay 6"
+    id: relay5
+    restore_mode: ALWAYS_OFF
+    pin:
+      # pcf8574: pcf8574_hub
+      number: 25
+      mode: OUTPUT
+      inverted: false
+      
+  - platform: gpio
+    name: "Relay 7"
+    id: relay6
+    restore_mode: ALWAYS_OFF
+    pin:
+      # pcf8574: pcf8574_hub
+      number: 26
+      mode: OUTPUT
+      inverted: false
+
+  - platform: gpio
+    name: "Relay 8"
+    id: relay7
+    restore_mode: ALWAYS_OFF
+    pin:
+      # pcf8574: pcf8574_hub
+      number: 32
+      mode: OUTPUT
+      inverted: false
+
+  - platform: restart
+    name: "Timers Restart"
+
+sensor:
+  - platform: rotary_encoder
+    id: encoder
+    name: "Rotary Encoder"
+    resolution: 2
+    pin_a: 14
+    pin_b: 27
+    internal: True
+    # last_reset_type: ""
+    on_clockwise:
+      - switch.turn_on: screenlight
+      # - component.update: my_display
+    on_anticlockwise:
+      - switch.turn_on: screenlight
+      # - component.update: my_display
+
+  - platform: wifi_signal
+    id: wfsig
+    name: "WiFi Signal Sensor"
+    update_interval: 600s
+
+  - platform: dht
+    pin: 15
+    model: DHT11
+    temperature:
+      name: "Garden Temperature"
+      id: dthsensor1tmp
+    humidity:
+      name: "Garden Humidity"
+      id: dthsensor1hmd
+    update_interval: 60s
+
+text_sensor:
+  - platform: template
+    id: line1
+    name: "screen line 1"
+    
+  - platform: template
+    id: line2
+    name: "screen line 2"
+
+  - platform: template
+    id: line3
+    name: "screen line 3"
+
+  - platform: template
+    id: line4
+    name: "screen line 4"
+
+cover:
+  - platform: template
+    id: my_cover
+    # icon: "mdi:decagram-outline"
+    name: "Rotate Control"
+    #cw
+    open_action:
+      - switch.turn_on: screenlight
+      - lambda: |-
+            id(encoder).set_value(id(encoder).state - 1);
+            id(my_cover).position = 0.5;
+    #ccw
+    close_action:
+      - switch.turn_on: screenlight
+      - lambda: |-
+            id(encoder).set_value(id(encoder).state + 1);
+            id(my_cover).position = 0.5;
+    # button
+    stop_action:
+      - switch.turn_on: screenlight
+      - lambda: |-
+            UIsys.buttonCallBack();
+    optimistic: true
+    has_position: true
+    assumed_state: true
+
+binary_sensor:
+  - platform: gpio
+    name: button
+    pin: 
+      number: 17
+      mode: INPUT_PULLUP
+      inverted: True
+    internal: True
+    on_press:
+      then:
+        - switch.turn_on: screenlight
+        - lambda: |-
+            UIsys.buttonCallBack();
+
+display:
+  - platform: lcd_pcf8574
+    i2c_id: bus_a
+    id: my_display
+    dimensions: 20x4
+    address: 0x27
+    #adaptive fresh rate to prevent noise when change relay state in code
+    update_interval: 1000ms
+    lambda: |-
+        UIsys.render();
+
+custom_component:
+  - lambda: |-
+      return {&SDCard_mng};
+
+  - lambda: |-
+      return {&timer_mng};
+
+  - lambda: |-
+      return {&virtual_screen};
