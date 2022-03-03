@@ -55,6 +55,7 @@ logger:
 mqtt:
   id: smqtt
   broker: your.mqtt.broker.duckdns.net
+  #note that currently ESPHome not yet support MQTT secure so you should have to use port 1883 as an unsecure port https://github.com/esphome/feature-requests/issues/133
   port: 1883
   username: your_mqtt_username
   password: your_mqtt_password
@@ -292,7 +293,7 @@ binary_sensor:
   - platform: gpio
     name: button
     pin: 
-      number: 17
+      number: 16
       mode: INPUT_PULLUP
       inverted: True
     internal: True
