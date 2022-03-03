@@ -97,7 +97,7 @@ Plugging in your hardware (the MicroUSB on esp32 board) and upload the code by r
 
 ### STEP3: Enjoy
 After upload, if your wiring correctly, you should be able to use the project. Again the first time you boot the system, you will need to have a WiFi connection to let the ESP set the RTC time automatically. After that, you needn't.
-If you don't know about ESPnow, go and check out many devices you can integrate with.
+If you don't know about [ESPhome](https://esphome.io/index.html), go and check out many devices you can integrate with.
 
 [0]: images/cutit.jpg
 [1]: images/Requirement.png
