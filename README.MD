@@ -2,7 +2,7 @@
 
 ## I'm lazy to read, give me some video :) 
 
-... I'm making ... 
+[<img src="https://img.youtube.com/vi/iN_e02LLBGo/0.jpg" width="50%">](https://youtu.be/iN_e02LLBGo)
 
 ## WHAT IS THIS?
 
