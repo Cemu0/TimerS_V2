@@ -2,7 +2,7 @@
 
 ## I'm lazy to read, give me some video :) 
 
-[<img src="https://img.youtube.com/vi/iN_e02LLBGo/0.jpg" width="50%">](https://youtu.be/iN_e02LLBGo)
+<iframe width="560" height="315" src="https://www.youtube.com/embed/iN_e02LLBGo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## WHAT IS THIS?
 
